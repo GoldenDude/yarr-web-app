@@ -2,16 +2,18 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { 
   Radar,
-  RadarChart, 
+  Tooltip,
   PolarGrid, 
-  Legend,
+  RadarChart, 
   PolarAngleAxis, 
-  PolarRadiusAxis 
+  PolarRadiusAxis
 } from 'recharts'
+import MoonLoader from "react-spinners/MoonLoader"
 
 const mapStateToProps = ({ user }) => {
   return {
-    userInfo: user.userInfo
+    userInfo: user.userInfo,
+    bearerKey: user.bearerKey,
   }
 }
 
@@ -22,37 +24,39 @@ class StudyInsightRadar extends Component {
     this.state = {
       data: [],
       names: ["mean", "median", "mode", "range"],
-      selectedName: 0
+      selectedName: 0,
+      dataLoaded: false
     }
 
     this.handleTypeChange = this.handleTypeChange.bind(this)
   }
 
-  componentDidMount() {
-    const { studyId, userInfo } = this.props
+  async componentDidMount() {
+    const { studyId, userInfo, bearerKey } = this.props
 
     const url = `https://yarr-insight-service.herokuapp.com/requestInsightRadar?researcherId=${userInfo.researcherId}&studyId=${studyId}`
+    const json = {
+      userInfo: userInfo,
+      bearerKey: bearerKey
+    }
 
-    fetch(url).then(res => res.json())
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(json)
+    }).then(res => res.json())
       .then(json => {
         if (json.result === "Success") {
-          let tempData = []
-          json.data.map(line => {
-            tempData.push({ 
-              experiment: line.ExperimentTitle,
-              highest: parseInt(line.HighestEngagement),
-              mean: parseInt(line.MeanEngagement),
-              median: parseInt(line.MedianEngagement),
-              mode: parseInt(line.ModeEngagement),
-              range: parseInt(line.RangeEngagement)
-            })
-            return null
-          })
-
-          this.setState({ data: tempData })
+          this.setState({ data: json.data })
         }
+        else this.setState({ data: [] })
       })
       .catch(err => console.log(err))
+
+    this.setState({ dataLoaded: true })
   }
 
   handleTypeChange(event) {
@@ -60,10 +64,11 @@ class StudyInsightRadar extends Component {
   }
 
   render() {
-    const { data, names, selectedName } = this.state
+    const { data, names, selectedName, dataLoaded } = this.state
 
-    return data.length ? (
+    return (
       <div className="insightCard">
+        <h4 style={{ textAlign: "center" }}>Most Engaging Game Mode</h4>
         <div>
           <select
             value={selectedName}
@@ -75,14 +80,28 @@ class StudyInsightRadar extends Component {
             })}
           </select>
         </div>
-        <RadarChart cx={300} cy={250} outerRadius={150} width={800} height={450} data={data}>
-          <PolarGrid />
-          <PolarAngleAxis dataKey="experiment" />
-          <PolarRadiusAxis domain={[0, 10]}/>
-          <Radar dataKey={names[selectedName]} stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-        </RadarChart>
+        {
+          dataLoaded ? 
+          (
+            <div className="insightHolder">
+              <RadarChart cx={375} cy={230} outerRadius={175} width={1000} height={500} data={data}>
+                <PolarGrid />
+                <PolarAngleAxis dataKey="experiment" />
+                <PolarRadiusAxis domain={[0, 10]} />
+                <Radar dataKey={names[selectedName]} stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                <Tooltip />
+              </RadarChart>
+            </div>
+          ) 
+          : 
+          (
+            <div className="barLoader">
+              <MoonLoader size={120} color={"#123abc"} loading={true} />
+            </div> 
+          )
+        }
       </div>
-    ) : null
+    )
   }
 }
 

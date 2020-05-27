@@ -1,13 +1,16 @@
 import {
   SET_EXPERIMENTS,
+  RESET_EXPERIMENTS,
   UPDATE_EXPERIMENT,
   DELETE_EXPERIMENT,
-  TOGGLE_BUILD_EXPERIMENT,
   SELECT_EXPERIMENT,
+  TOGGLE_BUILD_EXPERIMENT,
   CHANGE_EXPERIMENT_STATUS
 } from "../ActionsTypes/ExperimentActionTypes"
 
 const setExperiments = experiments => ({ type: SET_EXPERIMENTS, data: experiments })
+
+const resetExperiments = () => ({ type: RESET_EXPERIMENTS })
 
 const updateExperiment = (experimentId, title, details, disability, characterType, colorSettings) => ({
   type: UPDATE_EXPERIMENT,
@@ -26,13 +29,17 @@ const selectExperiment = experiment => ({
   data: experiment
 })
 
-const changeExperimentStatus = (experimentId, status) => ({
+const changeExperimentStatus = (experimentId, data) => ({
   type: CHANGE_EXPERIMENT_STATUS,
-  data: { experimentId, status }
+  data: { experimentId, data }
 })
 
 const handleSetExperiments = experiments => async dispatch => {
   dispatch(setExperiments(experiments))
+}
+
+const handleResetExperiments = () => async dispatch => {
+  dispatch(resetExperiments())
 }
 
 const handleUpdateExperiment = (experimentId, title, details, disability, characterType, colorSettings) => async dispatch => {
@@ -51,12 +58,13 @@ const handleSelectExperiment = experiment => async dispatch => {
   dispatch(selectExperiment(experiment))
 }
 
-const handleChangeExperimentStatus = (experimentId, status) => async dispatch => {
-  dispatch(changeExperimentStatus(experimentId, status))
+const handleChangeExperimentStatus = (experimentId, data) => async dispatch => {
+  dispatch(changeExperimentStatus(experimentId, data))
 }
 
 export default {
   handleSetExperiments,
+  handleResetExperiments,
   handleUpdateExperiment,
   handleDeleteExperiment,
   handleToggleBuildExperiment,

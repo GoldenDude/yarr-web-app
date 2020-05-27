@@ -6,6 +6,7 @@ import UserActions from '../../Actions/UserActions'
 import ExperimentActions from '../../Actions/ExperimentActions'
 import "react-step-progress-bar/styles.css"
 import { ProgressBar, Step } from "react-step-progress-bar"
+import ExperimentExplanation from './ExperimentExplanation'
 
 const mapStateToProps = ({ user }) => {
   return {
@@ -20,7 +21,7 @@ class ExperimentBuilder extends Component {
     super(props)
 
     this.state = {
-      wizardIndex: 0,
+      wizardIndex: -1,
       title: "",
       details: "",
       roundsNumber: 1,
@@ -69,7 +70,7 @@ class ExperimentBuilder extends Component {
     return (
       <div style={{ marginBottom: "20px", marginTop: "10px" }} >
       {editForm ? 
-        <ProgressBar percent={(tempIndex) / (steps)* 100 + 1}>
+        <ProgressBar percent={(tempIndex) / (steps) * 100 + 1}>
         <Step>
           {({ accomplished, index }) => (
             <div
@@ -176,6 +177,8 @@ class ExperimentBuilder extends Component {
       editForm,
       currExperiment,
       onSubmit,
+      bearerKey,
+      userInfo,
       handleUpdateExperiment,
       handleToggleBuildExperiment
     } = this.props
@@ -193,10 +196,11 @@ class ExperimentBuilder extends Component {
       disability: disability,
       characterType: characterType,
       colorSettings: colorSettings,
-      experimentId: editForm ? currExperiment.ExperimentId : undefined
+      experimentId: editForm ? currExperiment.ExperimentId : undefined,
+      bearerKey: bearerKey,
+      userInfo: userInfo
     }
 
-    console.log(json)
     event.preventDefault()
 
     fetch(url, {
@@ -361,7 +365,7 @@ class ExperimentBuilder extends Component {
           className="custom-range"
           name="roundDuration"
           type="range"
-          min="60"
+          min="30"
           max="300"
           required
         />
@@ -457,11 +461,16 @@ class ExperimentBuilder extends Component {
 
   renderVisualSettings() {
     const { characterType, disability, colorSettings } = this.state
-    const tempType = parseInt(characterType)
     const tempColor = parseInt(colorSettings)
+    const isFull = tempColor === 1 && disability !== 3
+    const shouldChangeType = parseInt(characterType) === 1 && !isFull
+    const tempType = shouldChangeType ? 2 : parseInt(characterType)
+
+    shouldChangeType === true && this.setState({ characterType: 2 })
 
     return(
       <div>
+        <div style={{ marginBottom: "50px", minHeight: "200px" }}>
         <label className="grey-text">
           Character Skin
         </label>
@@ -474,6 +483,7 @@ class ExperimentBuilder extends Component {
               name="characterType"
               type="radio"
               className="hideRadio"
+              disabled={!isFull ? "disabled" : ""}
               required
             />
             <label htmlFor="color" className="imageLableInput">
@@ -481,7 +491,7 @@ class ExperimentBuilder extends Component {
               <img
                 src={ require("../../Images/different_colors.png") }
                 alt="Characters differentiated by color"
-                className={tempType === 1 ? "selectedVisual builderImage inputImage" : "builderImage inputImage"}
+                className={tempType === 1 ? "selectedVisual builderImage inputImage" : !isFull ? "disabledImage inputImage" : "builderImage inputImage"}
               />
             </label>
           </div>
@@ -524,6 +534,7 @@ class ExperimentBuilder extends Component {
               </label>
           </div>
         </ul>
+        </div>
         {disability === "3" ? 
         (
             <div>
@@ -601,12 +612,30 @@ class ExperimentBuilder extends Component {
   render() {
     const { wizardIndex } = this.state
     const { status } = this.props
-    
+    const nextButton = wizardIndex === -1 ? "Got it! Let's start!" : "Next"
+    const title = wizardIndex === -1 ? "Let's Explain The Basics..." : "Create Experiment"
+
     return(
       <div className="experimentBuilder">
         <form>
-          <p className="h4 text-center mb-4">Create Experiment</p>
-          {this.renderProgressBar()}
+          <p className="h4 text-center mb-4">{title}</p>
+          {wizardIndex !== -1 && this.renderProgressBar()}
+          {
+          wizardIndex === -1 && 
+          (
+            <div>
+              <article>
+                <p>
+                  You get to build the experiment environment according to your study’s needs.<br />
+                  The experiment will be in a form of a playable game where the participants can either work together as teammates to achieve a mutual goal, or compete against one another to take the winning spot for themselves.
+                </p>
+                <p>
+                  Hover over the image to view the basic rules of the game:
+                </p>
+              </article>
+              <ExperimentExplanation />
+            </div>
+          )}
           {wizardIndex === 0 ?
             <div>
               <p className="h4 text-center mb-4">Experiment Info</p>
@@ -632,19 +661,19 @@ class ExperimentBuilder extends Component {
             </div> : (null)
           }
           <div className="form-row">
-            {wizardIndex !== 0 ?
+            {wizardIndex !== -1 ?
               <div className="text-center mt-4">
-                <MDBBtn color="elegant" className="login-btn" onClick={() => this.handleChangeSection("back")}>Back</MDBBtn>
+                <MDBBtn color="elegant" className="login-btn builderButton" onClick={() => this.handleChangeSection("back")}>Back</MDBBtn>
               </div> : (null)
             }
             {(wizardIndex !== 3 && (status === "Ready" || status === undefined)) ?
               <div className="text-center mt-4">
-                <MDBBtn color="elegant" className="login-btn" onClick={() => this.handleChangeSection("next")}>Next</MDBBtn>
+                <MDBBtn color="elegant" className={`login-btn ${wizardIndex !== -1 && "builderButton"} ${wizardIndex === -1 && "gotIt"}`} onClick={() => this.handleChangeSection("next")}>{nextButton}</MDBBtn>
               </div> : (null)
             }
             {(wizardIndex === 3 || (wizardIndex === 0 && status !== "Ready" && status !== undefined)) ?
               <div className="text-center mt-4">
-                <MDBBtn color="elegant" onClick={this.handleSubmit} className="login-btn">Save Experiment</MDBBtn>
+                <MDBBtn color="elegant" onClick={this.handleSubmit} className="login-btn builderButton">Save Experiment</MDBBtn>
               </div> : (null)
             }
           </div>

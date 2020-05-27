@@ -4,9 +4,11 @@ import PropTypes from "prop-types"
 import ExperimentActions from "../../Actions/ExperimentActions"
 import ExperimentItem from "./ExperimentItem"
 
-const mapStateToProps = ({ experiment }) => {
+const mapStateToProps = ({ experiment, user }) => {
   return {
-    experimentList: experiment.experimentList
+    experimentList: experiment.experimentList,
+    userInfo: user.userInfo,
+    bearerKey: user.bearerKey
   }
 }
 
@@ -15,16 +17,28 @@ export class ExperimentList extends Component {
     super(props)
 
     this.renderList = this.renderList.bind(this)
-    this.eachExperiment = this.eachExperiment.bind(this)
     this.handleDelete = this.handleDelete.bind(this)
+    this.eachExperiment = this.eachExperiment.bind(this)
   }
 
   componentDidMount() {
-    const { studyId, handleSetExperiments } = this.props
+    const { studyId, handleSetExperiments, userInfo, bearerKey } = this.props
 
     const getAllUrl = `https://yarr-experiment-service.herokuapp.com/getAllStudyExperiments?studyId=${studyId}`
 
-    fetch(getAllUrl).then(res => res.json())
+    const json = {
+      bearerKey: bearerKey,
+      userInfo: userInfo
+    }
+
+    fetch(getAllUrl, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(json)
+    }).then(res => res.json())
       .then(json => {
         if (json.result === "Success") {
           handleSetExperiments(json.experiments)
@@ -37,18 +51,23 @@ export class ExperimentList extends Component {
   }
 
   handleDelete(experimentId) {
-    const { handleDeleteExperiment } = this.props
+    const { handleDeleteExperiment, userInfo, bearerKey } = this.props
     const url = `https://yarr-experiment-service.herokuapp.com/deleteExperiment?experimentId=${experimentId}`
+
+    const json = {
+      bearerKey: bearerKey,
+      userInfo: userInfo
+    }
 
     fetch(url, {
       method: "DELETE",
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json"
-      }
+      },
+      body: JSON.stringify(json)
     }).then(res => res.json())
         .then(json => {
-          console.log(json)
           if (json.result === "Success") {
             handleDeleteExperiment(experimentId)
           }
@@ -60,7 +79,10 @@ export class ExperimentList extends Component {
     const { studyId, toggleEdit } = this.props
     const { Title, ExperimentId, CreationDate, Status, Details } = experiment
     const limitedDetails = Details.length > 265 ? Details.substring(0, 265) + '...' : Details
-    const statusStyle = Status === "Running" ? ({ color: "#4BB543", paddingLeft: 10 + 'px' }) : ({ paddingLeft: 10 + 'px' })
+    const statusStyle = Status === "Running" ? 
+    ({ color: "#4BB543", paddingLeft: 10 + 'px' }) 
+      : (Status === "Ready" ? { paddingLeft: 10 + 'px' } : { color: "red", paddingLeft: 10 + 'px' })
+
     return (
       <div className="card" key={`container${i}`}>
         <div className="card-body">
@@ -79,32 +101,20 @@ export class ExperimentList extends Component {
               <label className="card-title cardInlineText">{CreationDate}</label>
               <div className="cardInlineText">
                 <label className="card-text">Status:</label>
-                <label className="card-title" style={statusStyle}>{Status}</label>
+                <label className="card-title" style={statusStyle}><b>{Status}</b></label>
               </div>
             </div>
           </ExperimentItem>
         </div>
       </div>
-      // <ExperimentItem
-      //   key={`experiment${i}`}
-      //   experimentId={parseInt(experiment.ExperimentId)}
-      //   studyId={parseInt(studyId)}
-      //   title={experiment.Title}
-      //   creationDate={experiment.CreationDate}
-      //   status={experiment.Status}
-      //   details={experiment.Details}
-      //   gameSettings={experiment.GameSettings}
-      //   handleEdit={this.handleEdit}
-      //   handleDelete={this.handleDelete}
-      // />
     )
   }
 
   renderList() {
     const { experimentList } = this.props
-    if (experimentList.length) {
+    if (experimentList.length)
       return experimentList.map(this.eachExperiment)
-    }
+      
     return <label>No experiments found</label>
   }
 

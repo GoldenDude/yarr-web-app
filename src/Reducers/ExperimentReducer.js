@@ -1,16 +1,18 @@
 import {
   SET_EXPERIMENTS,
+  RESET_EXPERIMENTS,
   UPDATE_EXPERIMENT,
   DELETE_EXPERIMENT,
-  TOGGLE_BUILD_EXPERIMENT,
   SELECT_EXPERIMENT,
+  TOGGLE_BUILD_EXPERIMENT,
   CHANGE_EXPERIMENT_STATUS
 } from "../ActionsTypes/ExperimentActionTypes"
 
 const initialState = {
   experimentList: [],
   experiment: null,
-  buildExperiment: false
+  buildExperiment: false,
+  experimentsLoaded: false
 }
 
 export default (state = initialState, action) => {
@@ -19,7 +21,8 @@ export default (state = initialState, action) => {
       action.data.sort((a, b) => parseInt(b.ExperimentId) - parseInt(a.ExperimentId))
       return {
         ...state,
-        experimentList: action.data
+        experimentList: action.data,
+        experimentsLoaded: true
       }
     }
     
@@ -58,10 +61,13 @@ export default (state = initialState, action) => {
     case CHANGE_EXPERIMENT_STATUS: {
       const newList = state.experimentList.filter(i => parseInt(i.ExperimentId) !== action.data.experimentId)
       let toUpdate = state.experimentList.find(i => parseInt(i.ExperimentId) === action.data.experimentId)
-      toUpdate.Status = action.data.status
+      toUpdate.Status = action.data.data.status
+      toUpdate.GameCode = action.data.data.gameCode
+      newList.push(toUpdate)
+      newList.sort((a, b) => parseInt(b.ExperimentId) - parseInt(a.ExperimentId))
       return {
         ...state,
-        experimentList: [...newList, toUpdate]
+        experimentList: newList
       }
     }
 
@@ -69,6 +75,14 @@ export default (state = initialState, action) => {
       return {
         ...state,
         experiment: action.data
+      }
+    }
+
+    case RESET_EXPERIMENTS: {
+      return {
+        ...state,
+        experimentList: [],
+        experimentsLoaded: false
       }
     }
 
