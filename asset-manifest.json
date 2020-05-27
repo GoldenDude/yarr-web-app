@@ -1,0 +1,36 @@
+{
+  "files": {
+    "main.css": "/yarr-web-app/static/css/main.3b0746e0.chunk.css",
+    "main.js": "/yarr-web-app/static/js/main.6080b3d7.chunk.js",
+    "main.js.map": "/yarr-web-app/static/js/main.6080b3d7.chunk.js.map",
+    "runtime-main.js": "/yarr-web-app/static/js/runtime-main.3529593f.js",
+    "runtime-main.js.map": "/yarr-web-app/static/js/runtime-main.3529593f.js.map",
+    "static/css/2.e5fc3193.chunk.css": "/yarr-web-app/static/css/2.e5fc3193.chunk.css",
+    "static/js/2.9bcf2a1d.chunk.js": "/yarr-web-app/static/js/2.9bcf2a1d.chunk.js",
+    "static/js/2.9bcf2a1d.chunk.js.map": "/yarr-web-app/static/js/2.9bcf2a1d.chunk.js.map",
+    "index.html": "/yarr-web-app/index.html",
+    "precache-manifest.4288899f6e6d121863d5b8dbea262416.js": "/yarr-web-app/precache-manifest.4288899f6e6d121863d5b8dbea262416.js",
+    "service-worker.js": "/yarr-web-app/service-worker.js",
+    "static/css/2.e5fc3193.chunk.css.map": "/yarr-web-app/static/css/2.e5fc3193.chunk.css.map",
+    "static/css/main.3b0746e0.chunk.css.map": "/yarr-web-app/static/css/main.3b0746e0.chunk.css.map",
+    "static/js/2.9bcf2a1d.chunk.js.LICENSE.txt": "/yarr-web-app/static/js/2.9bcf2a1d.chunk.js.LICENSE.txt",
+    "static/media/Game.png": "/yarr-web-app/static/media/Game.23ca55b3.png",
+    "static/media/mdb.css": "/yarr-web-app/static/media/arrow_right.8ef6a08c.svg",
+    "static/media/blue_yellow_color_blindness.jpg": "/yarr-web-app/static/media/blue_yellow_color_blindness.de97ae4c.jpg",
+    "static/media/competitive.png": "/yarr-web-app/static/media/competitive.0ae8f2c1.png",
+    "static/media/cooperative.png": "/yarr-web-app/static/media/cooperative.9cc01480.png",
+    "static/media/different_colors.png": "/yarr-web-app/static/media/different_colors.5057b782.png",
+    "static/media/different_design.png": "/yarr-web-app/static/media/different_design.fb42c3f4.png",
+    "static/media/different_shapes.png": "/yarr-web-app/static/media/different_shapes.aa64bef9.png",
+    "static/media/all.min.css": "/yarr-web-app/static/media/fa-solid-900.cdfec5cf.woff",
+    "static/media/full_spectrum_vision.jpg": "/yarr-web-app/static/media/full_spectrum_vision.b6b770bf.jpg",
+    "static/media/red_green_color_blindness.jpg": "/yarr-web-app/static/media/red_green_color_blindness.2490b99e.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.3529593f.js",
+    "static/css/2.e5fc3193.chunk.css",
+    "static/js/2.9bcf2a1d.chunk.js",
+    "static/css/main.3b0746e0.chunk.css",
+    "static/js/main.6080b3d7.chunk.js"
+  ]
+}
