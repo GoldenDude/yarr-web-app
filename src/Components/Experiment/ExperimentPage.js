@@ -42,7 +42,6 @@ class ExperimentPage extends Component {
       csvData: [],
       csvLoaded: false,
       interrupted: false,
-      noExperiment: false,
       experimentLoaded: false,
       startStopFinished: true
     }
@@ -50,7 +49,6 @@ class ExperimentPage extends Component {
     this.renderLogged = this.renderLogged.bind(this)
     this.renderRounds = this.renderRounds.bind(this)
     this.fetchRawData = this.fetchRawData.bind(this)
-    this.fetchExperiment = this.fetchExperiment.bind(this)
     this.notifyInterrupted = this.notifyInterrupted.bind(this)
     this.handleViewGameCode = this.handleViewGameCode.bind(this)
     this.handleStopExperiment = this.handleStopExperiment.bind(this)
@@ -58,8 +56,15 @@ class ExperimentPage extends Component {
     this.handleScrollToElement = this.handleScrollToElement.bind(this)
   }
 
-  componentDidMount() {
-    const { handleSetRoutes } = this.props
+  async componentDidMount() {
+    const { 
+      userInfo, 
+      bearerKey, 
+      experimentList, 
+      handleSetRoutes, 
+      handleSetExperiments, 
+      handleSelectExperiment
+    } = this.props
     const experimentId = this.props.match.params.experimentId
     const studyId = this.props.match.params.studyId
     const routes = [
@@ -68,28 +73,14 @@ class ExperimentPage extends Component {
       { name: 'Experiment', redirect: `/Study/${studyId}/Experiment/${experimentId}`, isActive: false }
     ]
 
-    handleSetRoutes(routes)
-  }
-
-  async fetchExperiment() {
-    const {
-      userInfo,
-      bearerKey,
-      experimentList,
-      handleSetExperiments,
-      handleSelectExperiment
-    } = this.props
-
-    const experimentId = this.props.match.params.experimentId
-
     let experiment = null
-    if (experimentList.length === 0) {
+    if(experimentList.length === 0) {
       const url = `https://yarr-experiment-service.herokuapp.com/getExperiment?experimentId=${experimentId}`
       const json = {
         userInfo: userInfo,
         bearerKey: bearerKey
       }
-
+      
       await fetch(url, {
         method: "POST",
         headers: {
@@ -101,21 +92,19 @@ class ExperimentPage extends Component {
         if (json.result === "Success") {
           experiment = json.experiment
         }
-        else experiment = undefined
       })
-        .catch(err => {
-          console.log(err)
-          experiment = undefined
-        })
+      .catch(err => console.log(err))
 
     } else {
       const idCompare = i => parseInt(i.ExperimentId) === parseInt(experimentId)
       experiment = experimentList.find(idCompare)
     }
-
+    
+    handleSetRoutes(routes)
     handleSelectExperiment(experiment)
-    experiment && handleSetExperiments([experiment])
-    experiment ? this.setState({ experimentLoaded: true }) : this.setState({ noExperiment: true })
+    handleSetExperiments([experiment])
+    this.setState({ experimentLoaded: true })
+    this.fetchRawData()
   }
 
   fetchRawData() {
@@ -294,8 +283,7 @@ class ExperimentPage extends Component {
     const codeButtonFunction = Status === "Running" ? this.handleStopExperiment : this.handleStartExperiment
     const runningStyle = ({ color: "#4BB543", fontWeight: "bold" })
     const fileName = experiment ? `Experiment ${Title} Raw Data.csv` : "tempName.csv"
-    this.fetchRawData()
-    this.fetchExperiment()
+
     return (
       <div className="studyPage">
         <Header />
@@ -429,8 +417,8 @@ class ExperimentPage extends Component {
   } 
 
   render() {
-    const { isLogged, noExperiment } = this.props
-    return isLogged ? (!noExperiment ? this.renderLogged() : <Redirect to='/' /> ) : (<Redirect to='/' />)
+    const { isLogged, experiment } = this.props
+    return experiment ? (isLogged ? (this.renderLogged()) : (<Redirect to='/' />)) : (null)
   }
 }
 
