@@ -1,6 +1,5 @@
 {
   "name": "yarr-web-app",
-  "homepage": "https://YARR-Shenkar.github.io/yarr",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
