@@ -81,7 +81,6 @@ export class ExperimentItem extends Component {
       }
       else {
         // No interrupted here        
-        console.log(json)
       }
     })
       .catch(err => {

@@ -66,10 +66,8 @@ class StudyPage extends Component {
     handleResetExperiments()
     this.setRoutes()
     buildExperiment && handleToggleBuildExperiment()
-    this.fetchExperiments()
     studies.length && this.setState({ studyLoaded: true })
-    !studies.length && this.fetchStudies()
-    this.fetchRawData()
+
   }
 
   setRoutes(){
@@ -285,6 +283,9 @@ class StudyPage extends Component {
     const currStudy = studies.find(idCompare)
     
     const fileName = currStudy ? `Study ${currStudy.Title} Raw Data.csv` : "tempName.csv"
+    this.fetchExperiments()
+    this.fetchRawData()
+    !studies.length && this.fetchStudies()
 
     return (
       <div className="studyPage">
