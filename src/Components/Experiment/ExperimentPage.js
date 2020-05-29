@@ -113,6 +113,7 @@ class ExperimentPage extends Component {
       experiment = experimentList.find(idCompare)
       !experiment && this.props.history.push('/')
       handleSelectExperiment(experiment)
+      this._isMounted && this.setState({ experimentLoaded: true })
     }
     
     handleSetRoutes(routes)
