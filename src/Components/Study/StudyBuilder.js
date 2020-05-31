@@ -47,7 +47,8 @@ class StudyBuilder extends Component {
       currStudy, 
       onSubmit,
       handleUpdateStudy,
-      bearerKey
+      bearerKey,
+      handleAddStudy
     } = this.props
     let url = 'https://yarr-study-service.herokuapp.com'
     url += editForm ? '/updateStudy' : '/addStudy'
@@ -82,6 +83,13 @@ class StudyBuilder extends Component {
             handleUpdateStudy(currStudy)
           }
           else {
+            const newStudy = {
+              StudyId: `${json.params.insertId}`,
+              Title: title,
+              Description: description,
+              StudyQuestions: studyQuestions
+            }
+            handleAddStudy(newStudy)
             handleToggleBuildStudy()
             this.props.history.push(`/study/${json.params.insertId}`)
           }
