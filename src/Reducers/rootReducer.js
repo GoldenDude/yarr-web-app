@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 import UserReducer from './UserReducer'
 import StudyReducer from './StudyReducer'
+import SnackbarReducer from './SnackbarReducer'
 import ExperimentReducer from './ExperimentReducer'
 import BreadcrumbsReducer from './BreadcrumbsReducer'
 import { USER_LOGOUT } from '../ActionsTypes/UserActionTypes'
@@ -8,6 +9,7 @@ import { USER_LOGOUT } from '../ActionsTypes/UserActionTypes'
 const appReducer = combineReducers({
   user: UserReducer,
   study: StudyReducer,
+  snackbar: SnackbarReducer,
   experiment: ExperimentReducer,
   breadcrumbs: BreadcrumbsReducer
 })
