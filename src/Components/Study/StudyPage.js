@@ -305,7 +305,7 @@ class StudyPage extends Component {
     const studyId = parseInt(this.props.match.params.studyId)
     const idCompare = i => parseInt(i.StudyId) === parseInt(studyId)
     const currStudy = studies.find(idCompare)
-    const barsURL = `https://yarr-insight-service.herokuapp.com/requestInsightBars?researcherId=${userInfo.researcherId}&studyId=${studyId}`
+    const barsURL = `https://yarr-insight-service.herokuapp.com/requestStudyInsightBars?researcherId=${userInfo.researcherId}&studyId=${studyId}`
 
     const fileName = currStudy ? `Study ${currStudy.Title} Raw Data.csv` : "tempName.csv"
 

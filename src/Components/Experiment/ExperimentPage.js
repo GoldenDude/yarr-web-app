@@ -363,7 +363,7 @@ class ExperimentPage extends Component {
     const codeButtonFunction = Status === "Running" ? this.handleStopExperiment : this.handleStartExperiment
     const runningStyle = ({ color: "#4BB543", fontWeight: "bold" })
     const fileName = experiment ? `Experiment ${Title} Raw Data.csv` : "tempName.csv"
-    const barsURL = `https://yarr-insight-service.herokuapp.com/requestInsightBars?researcherId=${userInfo.researcherId}&studyId=${studyId}`
+    const barsURL = `https://yarr-insight-service.herokuapp.com/requestExperimentInsightBars?experimentId=${experimentId}`
 
     return (
       <div className="studyPage">
