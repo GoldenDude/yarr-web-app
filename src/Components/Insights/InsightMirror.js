@@ -145,7 +145,6 @@ class InsightMirror extends Component {
                 <Tooltip />
                 <Legend />
                 {names.map((name, i) => {
-                  console.log(name)
                   let randomcolor = randomColor({ hue: hues[(selectedType * 2 + i) % 5], format: "hex", luminosity: "dark" })
                   return <Line connectNulls={true} type="monotone" key={`key${name}`} dataKey={name} stroke={randomcolor} />
                 })}
