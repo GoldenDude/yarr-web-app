@@ -11,12 +11,12 @@ import MoonLoader from "react-spinners/MoonLoader"
 import InsightsBars from '../Insights/InsightsBars'
 import UserActions from '../../Actions/UserActions'
 import StudyActions from '../../Actions/StudyActions'
+import InsightMirror from '../Insights/InsightMirror'
 import ExperimentList from '../Experiment/ExperimentList'
 import StudyInsightRadar from '../Insights/StudyInsightsRadar'
 import ExperimentActions from '../../Actions/ExperimentActions'
 import ExperimentBuilder from '../Experiment/ExperimentBuilder'
 import StudyInsightsMixed from '../Insights/StudyInsightsMixed'
-import StudyInsightsMirror from '../Insights/StudyInsightsMirror'
 import BreadcrumbsActions from '../../Actions/BreadcrumbsActions'
 
 const mapStateToProps = ({ user, study, experiment }) => {
@@ -306,6 +306,7 @@ class StudyPage extends Component {
     const idCompare = i => parseInt(i.StudyId) === parseInt(studyId)
     const currStudy = studies.find(idCompare)
     const barsURL = `https://yarr-insight-service.herokuapp.com/requestStudyInsightBars?researcherId=${userInfo.researcherId}&studyId=${studyId}`
+    const mirrorURL = `https://yarr-insight-service.herokuapp.com/requestStudyInsightMirror?researcherId=${userInfo.researcherId}&studyId=${studyId}`
 
     const fileName = currStudy ? `Study ${currStudy.Title} Raw Data.csv` : "tempName.csv"
 
@@ -340,7 +341,7 @@ class StudyPage extends Component {
                 { 
                 currStudy ?
                 <div>
-                  <StudyInsightsMirror studyId={studyId} />
+                  <InsightMirror url={mirrorURL} />
                   <StudyInsightRadar studyId={studyId} />
                   <InsightsBars url={barsURL} />
                   <StudyInsightsMixed studyId={studyId} />
