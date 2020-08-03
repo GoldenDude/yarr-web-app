@@ -82,7 +82,7 @@ class StudyInsightRadar extends Component {
   renderData() {
     const { data, names, selectedName } = this.state
 
-    return data.length > 3 ? 
+    return data.length > 2 ? 
       (
       <div>
         <select
